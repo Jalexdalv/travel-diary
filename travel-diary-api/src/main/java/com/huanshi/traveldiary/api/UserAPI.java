@@ -90,6 +90,15 @@ public class UserAPI {
         return Response.success("密码修改成功");
     }
 
+    @PostMapping("/update-detail")
+    @NotNull
+    public Response updateDetail(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateNicknameDto updateNicknameDto) {
+        updateNicknameDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
+        userService.updateNickname(updateNicknameDto);
+        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateNicknameDto.getId() + " 的个人信息成功");
+        return Response.success("个人信息修改成功");
+    }
+
     @PostMapping("/update-nickname")
     @NotNull
     public Response updateNickname(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateNicknameDto updateNicknameDto) {
