@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 @Constraint(validatedBy = AvatarValidator.class)
 public @interface Avatar {
-    String message() default "头像url格式不正确";
+    String message() default "头像格式不正确";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
