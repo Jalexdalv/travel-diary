@@ -14,4 +14,13 @@
       </profile>
     </annotationProcessing>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="travel-diary-api" options="-parameters" />
+      <module name="travel-diary-common" options="-parameters" />
+      <module name="travel-diary-mapper" options="-parameters" />
+      <module name="travel-diary-pojo" options="-parameters" />
+      <module name="travel-diary-service" options="-parameters" />
+    </option>
+  </component>
 </project>
