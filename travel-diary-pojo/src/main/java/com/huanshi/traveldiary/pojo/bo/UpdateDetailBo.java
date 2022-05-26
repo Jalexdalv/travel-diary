@@ -1,6 +1,5 @@
-package com.huanshi.traveldiary.pojo.dto;
+package com.huanshi.traveldiary.pojo.bo;
 
-import com.huanshi.traveldiary.common.annotation.Nickname;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +7,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UpdateNicknameDto {
+public class UpdateDetailBo {
     private Long id;
-    @Nickname
     private String nickname;
+    private Integer sex;
+    private String avatar;
+    private String profile;
+    private Long version;
 }

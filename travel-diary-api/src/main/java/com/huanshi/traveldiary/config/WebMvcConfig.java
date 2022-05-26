@@ -15,10 +15,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry interceptorRegistry) {
         interceptorRegistry.addInterceptor(globalInterceptor)
-                .addPathPatterns("/user/update-nickname")
-                .addPathPatterns("/user/update-sex")
-                .addPathPatterns("/user/update-avatar")
-                .addPathPatterns("/user/update-profile");
+                .addPathPatterns("/user/update-detail");
         WebMvcConfigurer.super.addInterceptors(interceptorRegistry);
     }
 }

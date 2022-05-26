@@ -12,11 +12,8 @@ import com.huanshi.traveldiary.common.exception.RepeatedlyRegisterException;
 import com.huanshi.traveldiary.common.exception.SendSmsVerifyCodeException;
 import com.huanshi.traveldiary.common.exception.SystemTimeRewindException;
 import com.huanshi.traveldiary.common.exception.UnregisteredException;
-import com.huanshi.traveldiary.common.exception.UpdateAvatarException;
-import com.huanshi.traveldiary.common.exception.UpdateNicknameException;
+import com.huanshi.traveldiary.common.exception.UpdateDetailException;
 import com.huanshi.traveldiary.common.exception.UpdatePasswordException;
-import com.huanshi.traveldiary.common.exception.UpdateProfileException;
-import com.huanshi.traveldiary.common.exception.UpdateSexException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,18 +106,11 @@ public class GlobalExceptionHandler {
         return Response.error(unregisteredException.getMessage());
     }
 
-    @ExceptionHandler(value = UpdateAvatarException.class)
+    @ExceptionHandler(value = UpdateDetailException.class)
     @NotNull
-    public Response updateAvatarExceptionHandler(@NotNull HttpServletRequest httpServletRequest, @NotNull UpdateAvatarException updateAvatarException) {
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 用户 "  + httpServletRequest.getHeader("id") + " 的请求 " + httpServletRequest.getRequestURI() + " 出现异常", updateAvatarException);
-        return Response.error(updateAvatarException.getMessage());
-    }
-
-    @ExceptionHandler(value = UpdateNicknameException.class)
-    @NotNull
-    public Response updateNicknameExceptionHandler(@NotNull HttpServletRequest httpServletRequest, @NotNull UpdateNicknameException updateNicknameException) {
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 用户 "  + httpServletRequest.getHeader("id") + " 的请求 " + httpServletRequest.getRequestURI() + " 出现异常", updateNicknameException);
-        return Response.error(updateNicknameException.getMessage());
+    public Response updateDetailExceptionHandler(@NotNull HttpServletRequest httpServletRequest, @NotNull UpdateDetailException updateDetailException) {
+        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 用户 "  + httpServletRequest.getHeader("id") + " 的请求 " + httpServletRequest.getRequestURI() + " 出现异常", updateDetailException);
+        return Response.error(updateDetailException.getMessage());
     }
 
     @ExceptionHandler(value = UpdatePasswordException.class)
@@ -128,20 +118,6 @@ public class GlobalExceptionHandler {
     public Response updatePasswordExceptionHandler(@NotNull HttpServletRequest httpServletRequest, @NotNull UpdatePasswordException updatePasswordException) {
         log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 用户 "  + httpServletRequest.getHeader("id") + " 的请求 " + httpServletRequest.getRequestURI() + " 出现异常", updatePasswordException);
         return Response.error(updatePasswordException.getMessage());
-    }
-
-    @ExceptionHandler(value = UpdateProfileException.class)
-    @NotNull
-    public Response updateProfileExceptionHandler(@NotNull HttpServletRequest httpServletRequest, @NotNull UpdateProfileException updateProfileException) {
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 用户 "  + httpServletRequest.getHeader("id") + " 的请求 " + httpServletRequest.getRequestURI() + " 出现异常", updateProfileException);
-        return Response.error(updateProfileException.getMessage());
-    }
-
-    @ExceptionHandler(value = UpdateSexException.class)
-    @NotNull
-    public Response updateSexExceptionHandler(@NotNull HttpServletRequest httpServletRequest, @NotNull UpdateSexException updateSexException) {
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 用户 "  + httpServletRequest.getHeader("id") + " 的请求 " + httpServletRequest.getRequestURI() + " 出现异常", updateSexException);
-        return Response.error(updateSexException.getMessage());
     }
 
     @ExceptionHandler(value = Throwable.class)

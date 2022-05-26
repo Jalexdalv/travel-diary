@@ -10,27 +10,18 @@ import com.huanshi.traveldiary.common.exception.RegisterException;
 import com.huanshi.traveldiary.common.exception.RepeatedlyRegisterException;
 import com.huanshi.traveldiary.common.exception.SendSmsVerifyCodeException;
 import com.huanshi.traveldiary.common.exception.UnregisteredException;
-import com.huanshi.traveldiary.common.exception.UpdateAvatarException;
-import com.huanshi.traveldiary.common.exception.UpdateNicknameException;
+import com.huanshi.traveldiary.common.exception.UpdateDetailException;
 import com.huanshi.traveldiary.common.exception.UpdatePasswordException;
-import com.huanshi.traveldiary.common.exception.UpdateProfileException;
-import com.huanshi.traveldiary.common.exception.UpdateSexException;
 import com.huanshi.traveldiary.mapper.mysql.UserMySQLMapper;
 import com.huanshi.traveldiary.mapper.redis.UserRedisMapper;
-import com.huanshi.traveldiary.pojo.bo.UpdateAvatarBo;
-import com.huanshi.traveldiary.pojo.bo.UpdateNicknameBo;
+import com.huanshi.traveldiary.pojo.bo.UpdateDetailBo;
 import com.huanshi.traveldiary.pojo.bo.UpdatePasswordBo;
-import com.huanshi.traveldiary.pojo.bo.UpdateProfileBo;
-import com.huanshi.traveldiary.pojo.bo.UpdateSexBo;
 import com.huanshi.traveldiary.pojo.dto.LoginByPasswordDto;
 import com.huanshi.traveldiary.pojo.dto.LoginBySmsVerifyDto;
 import com.huanshi.traveldiary.pojo.dto.RegisterDto;
 import com.huanshi.traveldiary.pojo.dto.SendSmsVerifyCodeDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateAvatarDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateNicknameDto;
+import com.huanshi.traveldiary.pojo.dto.UpdateDetailDto;
 import com.huanshi.traveldiary.pojo.dto.UpdatePasswordDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateProfileDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateSexDto;
 import com.huanshi.traveldiary.pojo.po.User;
 import com.huanshi.traveldiary.pojo.vo.LoginVo;
 import com.huanshi.traveldiary.service.UserService;
@@ -192,57 +183,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     @Override
-    public void updateNickname(@NotNull UpdateNicknameDto updateNicknameDto) {
-        UpdateNicknameBo updateNicknameBo = new UpdateNicknameBo();
-        BeanUtils.copyProperties(updateNicknameDto, updateNicknameBo);
+    public void updateDetail(@NotNull UpdateDetailDto updateDetailDto) {
+        UpdateDetailBo updateDetailBo = new UpdateDetailBo();
+        BeanUtils.copyProperties(updateDetailDto, updateDetailBo);
         for (int times = 0; times < 10; times++) {
-            updateNicknameBo.setVersion(userMySQLMapper.selectVersionById(updateNicknameBo.getId()));
-            if (userMySQLMapper.updateNickname(updateNicknameBo) == 1) {
+            updateDetailBo.setVersion(userMySQLMapper.selectVersionById(updateDetailBo.getId()));
+            if (userMySQLMapper.updateDetail(updateDetailBo) == 1) {
                 return;
             }
         }
-        throw new UpdateNicknameException();
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-    @Override
-    public void updateSex(@NotNull UpdateSexDto updateSexDto) {
-        UpdateSexBo updateSexBo = new UpdateSexBo();
-        BeanUtils.copyProperties(updateSexDto, updateSexBo);
-        for (int times = 0; times < 10; times++) {
-            updateSexBo.setVersion(userMySQLMapper.selectVersionById(updateSexBo.getId()));
-            if (userMySQLMapper.updateSex(updateSexBo) == 1) {
-                return;
-            }
-        }
-        throw new UpdateSexException();
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-    @Override
-    public void updateAvatar(@NotNull UpdateAvatarDto updateAvatarDto) {
-        UpdateAvatarBo updateAvatarBo = new UpdateAvatarBo();
-        BeanUtils.copyProperties(updateAvatarDto, updateAvatarBo);
-        for (int times = 0; times < 10; times++) {
-            updateAvatarBo.setVersion(userMySQLMapper.selectVersionById(updateAvatarBo.getId()));
-            if (userMySQLMapper.updateAvatar(updateAvatarBo) == 1) {
-                return;
-            }
-        }
-        throw new UpdateAvatarException();
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-    @Override
-    public void updateProfile(@NotNull UpdateProfileDto updateProfileDto) {
-        UpdateProfileBo updateProfileBo = new UpdateProfileBo();
-        BeanUtils.copyProperties(updateProfileDto, updateProfileBo);
-        for (int times = 0; times < 10; times++) {
-            updateProfileBo.setVersion(userMySQLMapper.selectVersionById(updateProfileBo.getId()));
-            if (userMySQLMapper.updateProfile(updateProfileBo) == 1) {
-                return;
-            }
-        }
-        throw new UpdateProfileException();
+        throw new UpdateDetailException();
     }
 }

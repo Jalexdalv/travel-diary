@@ -6,11 +6,8 @@ import com.huanshi.traveldiary.pojo.dto.LoginByPasswordDto;
 import com.huanshi.traveldiary.pojo.dto.LoginBySmsVerifyDto;
 import com.huanshi.traveldiary.pojo.dto.RegisterDto;
 import com.huanshi.traveldiary.pojo.dto.SendSmsVerifyCodeDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateAvatarDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateNicknameDto;
+import com.huanshi.traveldiary.pojo.dto.UpdateDetailDto;
 import com.huanshi.traveldiary.pojo.dto.UpdatePasswordDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateProfileDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateSexDto;
 import com.huanshi.traveldiary.pojo.vo.LoginVo;
 import com.huanshi.traveldiary.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -92,46 +89,10 @@ public class UserAPI {
 
     @PostMapping("/update-detail")
     @NotNull
-    public Response updateDetail(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateNicknameDto updateNicknameDto) {
-        updateNicknameDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
-        userService.updateNickname(updateNicknameDto);
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateNicknameDto.getId() + " 的个人信息成功");
+    public Response updateDetail(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateDetailDto updateDetailDto) {
+        updateDetailDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
+        userService.updateDetail(updateDetailDto);
+        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateDetailDto.getId() + " 的个人信息成功");
         return Response.success("个人信息修改成功");
-    }
-
-    @PostMapping("/update-nickname")
-    @NotNull
-    public Response updateNickname(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateNicknameDto updateNicknameDto) {
-        updateNicknameDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
-        userService.updateNickname(updateNicknameDto);
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateNicknameDto.getId() + " 的昵称成功");
-        return Response.success("昵称修改成功");
-    }
-
-    @PostMapping("/update-sex")
-    @NotNull
-    public Response updateSex(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateSexDto updateSexDto) {
-        updateSexDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
-        userService.updateSex(updateSexDto);
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateSexDto.getId() + " 的性别成功");
-        return Response.success("性别修改成功");
-    }
-
-    @PostMapping("/update-avatar")
-    @NotNull
-    public Response updateAvatar(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateAvatarDto updateAvatarDto) {
-        updateAvatarDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
-        userService.updateAvatar(updateAvatarDto);
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateAvatarDto.getId() + " 的头像成功");
-        return Response.success("头像修改成功");
-    }
-
-    @PostMapping("/update-profile")
-    @NotNull
-    public Response updateProfile(@NotNull HttpServletRequest httpServletRequest, @RequestBody @NotNull @Valid UpdateProfileDto updateProfileDto) {
-        updateProfileDto.setId(Long.parseLong(StringUtils.trimToNull(httpServletRequest.getHeader("id"))));
-        userService.updateProfile(updateProfileDto);
-        log.info("IP地址 " + ipParser.parse(httpServletRequest) + " 修改用户id " + updateProfileDto.getId() + " 的自我介绍成功");
-        return Response.success("自我介绍修改成功");
     }
 }

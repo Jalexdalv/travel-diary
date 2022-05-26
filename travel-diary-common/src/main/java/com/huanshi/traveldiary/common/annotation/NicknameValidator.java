@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 public class NicknameValidator implements ConstraintValidator<Nickname, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        value = StringUtils.trimToNull(value);
-        return value != null && value.length() > 0 && value.length() <= 16;
+        value = StringUtils.trim(value);
+        return value == null || (value.length() > 0 && value.length() <= 16);
     }
 }

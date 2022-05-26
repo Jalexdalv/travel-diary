@@ -9,6 +9,6 @@ public class ProfileValidator implements ConstraintValidator<Profile, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
         value = StringUtils.trim(value);
-        return value.length() <= 50;
+        return value == null || value.length() <= 50;
     }
 }

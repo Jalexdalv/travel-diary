@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class AvatarValidator implements ConstraintValidator<Avatar, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        value = StringUtils.trimToNull(value);
-        return value != null && value.length() > 0 && value.length() <= 255 && Pattern.matches("^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\\\/])+$", value);
+        value = StringUtils.trim(value);
+        return value == null || (value.length() > 0 && value.length() <= 255 && Pattern.matches("^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\\\/])+$", value));
     }
 }

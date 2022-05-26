@@ -4,11 +4,8 @@ import com.huanshi.traveldiary.pojo.dto.LoginByPasswordDto;
 import com.huanshi.traveldiary.pojo.dto.LoginBySmsVerifyDto;
 import com.huanshi.traveldiary.pojo.dto.RegisterDto;
 import com.huanshi.traveldiary.pojo.dto.SendSmsVerifyCodeDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateAvatarDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateNicknameDto;
+import com.huanshi.traveldiary.pojo.dto.UpdateDetailDto;
 import com.huanshi.traveldiary.pojo.dto.UpdatePasswordDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateProfileDto;
-import com.huanshi.traveldiary.pojo.dto.UpdateSexDto;
 import com.huanshi.traveldiary.pojo.vo.LoginVo;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,8 +19,5 @@ public interface UserService {
     void register(@NotNull RegisterDto registerDto);
     void sendUpdatePasswordSmsVerifyCode(@NotNull SendSmsVerifyCodeDto sendSmsVerifyCodeDto);
     void updatePassword(@NotNull UpdatePasswordDto updatePasswordDto);
-    void updateNickname(@NotNull UpdateNicknameDto updateNicknameDto);
-    void updateSex(@NotNull UpdateSexDto updateSexDto);
-    void updateAvatar(@NotNull UpdateAvatarDto updateAvatarDto);
-    void updateProfile(@NotNull UpdateProfileDto updateProfileDto);
+    void updateDetail(@NotNull UpdateDetailDto updateDetailDto);
 }

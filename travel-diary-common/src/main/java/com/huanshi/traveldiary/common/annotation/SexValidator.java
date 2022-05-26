@@ -6,6 +6,6 @@ import javax.validation.ConstraintValidatorContext;
 public class SexValidator implements ConstraintValidator<Sex, Integer> {
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext constraintValidatorContext) {
-        return value != null && (value == 0 || value == 1);
+        return value == null || (value == 0 || value == 1 || value == 2);
     }
 }
