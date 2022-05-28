@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LoginBySmsVerifyDto {
+    private Long imei;
     @Phone
     private Long phone;
     @SmsVerifyCode

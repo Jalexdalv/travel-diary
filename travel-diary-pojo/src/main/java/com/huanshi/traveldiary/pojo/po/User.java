@@ -17,6 +17,9 @@ public class User {
     private Integer sex;
     private String avatar;
     private String profile;
+    private Integer follows;
+    private Integer fans;
+    private Integer likes;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Integer deleted;

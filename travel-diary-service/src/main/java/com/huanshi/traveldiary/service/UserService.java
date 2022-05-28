@@ -2,6 +2,7 @@ package com.huanshi.traveldiary.service;
 
 import com.huanshi.traveldiary.pojo.dto.LoginByPasswordDto;
 import com.huanshi.traveldiary.pojo.dto.LoginBySmsVerifyDto;
+import com.huanshi.traveldiary.pojo.dto.LogoutDto;
 import com.huanshi.traveldiary.pojo.dto.RegisterDto;
 import com.huanshi.traveldiary.pojo.dto.SendSmsVerifyCodeDto;
 import com.huanshi.traveldiary.pojo.dto.UpdateDetailDto;
@@ -17,6 +18,7 @@ public interface UserService {
     LoginVo login(@NotNull LoginBySmsVerifyDto loginBySmsVerifyDto);
     void sendRegisterSmsVerifyCode(@NotNull SendSmsVerifyCodeDto sendSmsVerifyCodeDto);
     void register(@NotNull RegisterDto registerDto);
+    void logout(@NotNull LogoutDto logoutDto);
     void sendUpdatePasswordSmsVerifyCode(@NotNull SendSmsVerifyCodeDto sendSmsVerifyCodeDto);
     void updatePassword(@NotNull UpdatePasswordDto updatePasswordDto);
     void updateDetail(@NotNull UpdateDetailDto updateDetailDto);

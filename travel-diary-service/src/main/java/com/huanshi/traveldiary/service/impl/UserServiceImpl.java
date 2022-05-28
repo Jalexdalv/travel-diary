@@ -14,10 +14,12 @@ import com.huanshi.traveldiary.common.exception.UpdateDetailException;
 import com.huanshi.traveldiary.common.exception.UpdatePasswordException;
 import com.huanshi.traveldiary.mapper.mysql.UserMySQLMapper;
 import com.huanshi.traveldiary.mapper.redis.UserRedisMapper;
+import com.huanshi.traveldiary.pojo.bo.LoginBo;
 import com.huanshi.traveldiary.pojo.bo.UpdateDetailBo;
 import com.huanshi.traveldiary.pojo.bo.UpdatePasswordBo;
 import com.huanshi.traveldiary.pojo.dto.LoginByPasswordDto;
 import com.huanshi.traveldiary.pojo.dto.LoginBySmsVerifyDto;
+import com.huanshi.traveldiary.pojo.dto.LogoutDto;
 import com.huanshi.traveldiary.pojo.dto.RegisterDto;
 import com.huanshi.traveldiary.pojo.dto.SendSmsVerifyCodeDto;
 import com.huanshi.traveldiary.pojo.dto.UpdateDetailDto;
@@ -49,11 +51,8 @@ public class UserServiceImpl implements UserService {
     public void sendLoginSmsVerifyCode(@NotNull SendSmsVerifyCodeDto sendSmsVerifyCodeDto) {
         if (userRedisMapper.selectLoginSmsVerifyCodeByPhone(sendSmsVerifyCodeDto.getPhone()) == null) {
             int smsVerifyCode = (int) ((Math.random() * 9 + 1) * 10000);
-            userRedisMapper.updateLoginSmsVerifyCode(sendSmsVerifyCodeDto.getPhone(), smsVerifyCode);
-            Integer liveSmsVerifyCode = userRedisMapper.selectLoginSmsVerifyCodeByPhone(sendSmsVerifyCodeDto.getPhone());
-            if (liveSmsVerifyCode != null && smsVerifyCode == liveSmsVerifyCode) {
+            if (userRedisMapper.updateLoginSmsVerifyCode(sendSmsVerifyCodeDto.getPhone(), smsVerifyCode)) {
                 try {
-                    // 此处为发送验证码代码
                     System.out.println("发送");
                     return;
                 } catch (Throwable throwable) {
@@ -71,9 +70,17 @@ public class UserServiceImpl implements UserService {
         User user = userMySQLMapper.selectByPhone(loginByPasswordDto.getPhone());
         if (user != null) {
             if (md5Cipher.md5Hash32(loginByPasswordDto.getPassword()).equals(user.getPassword())) {
-                String token = UUID.randomUUID().toString();
-                userRedisMapper.updateUserToken(user.getId(), token);
-                return new LoginVo(user.getId(), token);
+                if (userRedisMapper.lockLogin(user.getId())) {
+                    Integer loginDevice = userRedisMapper.selectLoginDevice(user.getId());
+                    if (loginDevice != null && loginDevice < 5) {
+                        String token = UUID.randomUUID().toString();
+                        LoginBo loginBo = new LoginBo(user.getId(), loginByPasswordDto.getImei(), token);
+                        userRedisMapper.updateToken(loginBo);
+                        userRedisMapper.unlockLogin(loginBo.getId());
+                        return new LoginVo(user.getId(), token);
+                    }
+                }
+                throw new LoginException();
             }
             throw new IncorrectPasswordException();
         }
@@ -91,14 +98,22 @@ public class UserServiceImpl implements UserService {
                 user = new User();
                 user.setId(id);
                 user.setPhone(loginBySmsVerifyDto.getPhone());
-                user.setNickname(md5Cipher.md5Hash16(Long.toString(id)));
+                user.setNickname(md5Cipher.md5Hash16(Long.toString(id)) + (int) ((Math.random() * 9 + 1) * 1000));
                 if (userMySQLMapper.insert(user) != 1) {
                     throw new LoginException();
                 }
             }
-            String token = UUID.randomUUID().toString();
-            userRedisMapper.updateUserToken(user.getId(), token);
-            return new LoginVo(user.getId(), token);
+            if (userRedisMapper.lockLogin(user.getId())) {
+                Integer loginDevice = userRedisMapper.selectLoginDevice(user.getId());
+                if (loginDevice != null && loginDevice < 5) {
+                    String token = UUID.randomUUID().toString();
+                    LoginBo loginBo = new LoginBo(user.getId(), loginBySmsVerifyDto.getImei(), token);
+                    userRedisMapper.updateToken(loginBo);
+                    userRedisMapper.unlockLogin(loginBo.getId());
+                    return new LoginVo(user.getId(), token);
+                }
+            }
+            throw new LoginException();
         }
         throw new IncorrectSmsVerifyCodeException();
     }
@@ -107,11 +122,8 @@ public class UserServiceImpl implements UserService {
     public void sendRegisterSmsVerifyCode(@NotNull SendSmsVerifyCodeDto sendSmsVerifyCodeDto) {
         if (userRedisMapper.selectRegisterSmsVerifyCodeByPhone(sendSmsVerifyCodeDto.getPhone()) == null) {
             int smsVerifyCode = (int) ((Math.random() * 9 + 1) * 10000);
-            userRedisMapper.updateRegisterSmsVerifyCode(sendSmsVerifyCodeDto.getPhone(), smsVerifyCode);
-            Integer liveSmsVerifyCode = userRedisMapper.selectRegisterSmsVerifyCodeByPhone(sendSmsVerifyCodeDto.getPhone());
-            if (liveSmsVerifyCode != null && smsVerifyCode == liveSmsVerifyCode) {
+            if (userRedisMapper.updateRegisterSmsVerifyCode(sendSmsVerifyCodeDto.getPhone(), smsVerifyCode)) {
                 try {
-                    // 此处为发送验证码代码
                     System.out.println("发送");
                     return;
                 } catch (Throwable throwable) {
@@ -145,14 +157,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void logout(@NotNull LogoutDto logoutDto) {
+        if (userRedisMapper.lockLogin(logoutDto.getId())) {
+            if (userRedisMapper.selectToken(logoutDto.getId(), logoutDto.getImei()) != null) {
+                userRedisMapper.deleteToken(logoutDto.getId(), logoutDto.getImei());
+            }
+            userRedisMapper.unlockLogin(logoutDto.getId());
+        }
+    }
+
+    @Override
     public void sendUpdatePasswordSmsVerifyCode(@NotNull SendSmsVerifyCodeDto sendSmsVerifyCodeDto) {
         if (userRedisMapper.selectUpdatePasswordSmsVerifyCodeByPhone(sendSmsVerifyCodeDto.getPhone()) == null) {
             int smsVerifyCode = (int) ((Math.random() * 9 + 1) * 10000);
-            userRedisMapper.updateUpdatePasswordSmsVerifyCode(sendSmsVerifyCodeDto.getPhone(), smsVerifyCode);
-            Integer liveSmsVerifyCode = userRedisMapper.selectUpdatePasswordSmsVerifyCodeByPhone(sendSmsVerifyCodeDto.getPhone());
-            if (liveSmsVerifyCode != null && smsVerifyCode == liveSmsVerifyCode) {
+            if (userRedisMapper.updateUpdatePasswordSmsVerifyCode(sendSmsVerifyCodeDto.getPhone(), smsVerifyCode)) {
                 try {
-                    // 此处为发送验证码代码
                     System.out.println("发送");
                     return;
                 } catch (Throwable throwable) {
@@ -170,7 +189,7 @@ public class UserServiceImpl implements UserService {
         if (updatePasswordDto.getSmsVerifyCode().equals(userRedisMapper.selectRegisterSmsVerifyCodeByPhone(updatePasswordDto.getPhone()))) {
             UpdatePasswordBo updatePasswordBo = new UpdatePasswordBo();
             BeanUtils.copyProperties(updatePasswordDto, updatePasswordBo);
-            for (int times = 0; times < 10; times++) {
+            for (int times = 0; times < 20; times++) {
                 updatePasswordBo.setVersion(userMySQLMapper.selectVersionByPhone(updatePasswordDto.getPhone()));
                 if (userMySQLMapper.updatePassword(updatePasswordBo) == 1) {
                     return;
@@ -186,7 +205,7 @@ public class UserServiceImpl implements UserService {
     public void updateDetail(@NotNull UpdateDetailDto updateDetailDto) {
         UpdateDetailBo updateDetailBo = new UpdateDetailBo();
         BeanUtils.copyProperties(updateDetailDto, updateDetailBo);
-        for (int times = 0; times < 10; times++) {
+        for (int times = 0; times < 20; times++) {
             updateDetailBo.setVersion(userMySQLMapper.selectVersionById(updateDetailBo.getId()));
             if (userMySQLMapper.updateDetail(updateDetailBo) == 1) {
                 return;

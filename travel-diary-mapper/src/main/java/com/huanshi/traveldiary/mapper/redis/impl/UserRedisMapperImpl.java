@@ -1,6 +1,8 @@
 package com.huanshi.traveldiary.mapper.redis.impl;
 
 import com.huanshi.traveldiary.mapper.redis.UserRedisMapper;
+import com.huanshi.traveldiary.pojo.bo.LoginBo;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,13 +16,55 @@ public class UserRedisMapperImpl implements UserRedisMapper {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public void updateLoginSmsVerifyCode(long phone, int smsVerifyCode) {
-        redisTemplate.opsForValue().setIfAbsent("login-sms-verify-code:" + phone, smsVerifyCode, 60, TimeUnit.SECONDS);
+    public boolean updateLoginSmsVerifyCode(long phone, int smsVerifyCode) {
+        return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent("login-sms-verify-code:" + phone, smsVerifyCode, 60, TimeUnit.SECONDS));
     }
 
     @Override
-    public void deleteLoginSmsVerifyCode(long phone) {
-        redisTemplate.delete("login-sms-verify-code:" + phone);
+    public boolean updateRegisterSmsVerifyCode(long phone, int smsVerifyCode) {
+        return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent("register-sms-verify-code:" + phone, smsVerifyCode, 60, TimeUnit.SECONDS));
+    }
+
+    @Override
+    public boolean updateUpdatePasswordSmsVerifyCode(long phone, int smsVerifyCode) {
+        return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent("update-password-sms-verify-code:" + phone, smsVerifyCode, 60, TimeUnit.SECONDS));
+    }
+
+    @Override
+    public boolean lockLogin(long id) {
+        return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent("login-lock:" + id, "lock"));
+    }
+
+    @Override
+    public void updateToken(@NotNull LoginBo loginBo) {
+        redisTemplate.opsForValue().set(loginBo.getId() + ":" + loginBo.getImei(), loginBo.getToken(), 7, TimeUnit.DAYS);
+        redisTemplate.opsForValue().increment("login-device:" + loginBo.getId());
+    }
+
+    @Override
+    public boolean deleteLoginSmsVerifyCode(long phone) {
+        return Boolean.TRUE.equals(redisTemplate.delete("login-sms-verify-code:" + phone));
+    }
+
+    @Override
+    public boolean deleteRegisterSmsVerifyCode(long phone) {
+        return Boolean.TRUE.equals(redisTemplate.delete("register-sms-verify-code:" + phone));
+    }
+
+    @Override
+    public boolean deleteUpdatePasswordSmsVerifyCode(long phone) {
+        return Boolean.TRUE.equals(redisTemplate.delete("update-password-sms-verify-code:" + phone));
+    }
+
+    @Override
+    public boolean unlockLogin(long id) {
+        return Boolean.TRUE.equals(redisTemplate.delete("login-lock:" + id));
+    }
+
+    @Override
+    public boolean deleteToken(long id, long imei) {
+        redisTemplate.opsForValue().decrement("login-device:" + id);
+        return Boolean.TRUE.equals(redisTemplate.delete(id + ":" + imei));
     }
 
     @Override
@@ -30,29 +74,9 @@ public class UserRedisMapperImpl implements UserRedisMapper {
     }
 
     @Override
-    public void updateRegisterSmsVerifyCode(long phone, int smsVerifyCode) {
-        redisTemplate.opsForValue().setIfAbsent("register-sms-verify-code:" + phone, smsVerifyCode, 60, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void deleteRegisterSmsVerifyCode(long phone) {
-        redisTemplate.delete("register-sms-verify-code:" + phone);
-    }
-
-    @Override
     @Nullable
     public Integer selectRegisterSmsVerifyCodeByPhone(long phone) {
         return (Integer) redisTemplate.opsForValue().get("register-sms-verify-code:" + phone);
-    }
-
-    @Override
-    public void updateUpdatePasswordSmsVerifyCode(long phone, int smsVerifyCode) {
-        redisTemplate.opsForValue().setIfAbsent("update-password-sms-verify-code:" + phone, smsVerifyCode, 60, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void deleteUpdatePasswordSmsVerifyCode(long phone) {
-        redisTemplate.delete("update-password-sms-verify-code:" + phone);
     }
 
     @Override
@@ -62,13 +86,14 @@ public class UserRedisMapperImpl implements UserRedisMapper {
     }
 
     @Override
-    public void updateUserToken(long id, String token) {
-        redisTemplate.opsForValue().set(Long.toString(id), token, 24, TimeUnit.HOURS);
+    @Nullable
+    public Integer selectLoginDevice(long id) {
+        return (Integer) redisTemplate.opsForValue().get("login-device:" + id);
     }
 
     @Override
     @Nullable
-    public String selectUserToken(long id) {
-        return (String) redisTemplate.opsForValue().get(Long.toString(id));
+    public String selectToken(long id, long imei) {
+        return (String) redisTemplate.opsForValue().get(id + ":" + imei);
     }
 }

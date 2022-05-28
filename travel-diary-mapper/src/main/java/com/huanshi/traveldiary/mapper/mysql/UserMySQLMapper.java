@@ -16,6 +16,8 @@ public interface UserMySQLMapper {
     int updateDetail(@NotNull UpdateDetailBo updateDetailBo);
     int existByPhone(long phone);
     @Nullable
+    User selectById(long id);
+    @Nullable
     User selectByPhone(long phone);
     @Nullable
     Long selectVersionById(long id);

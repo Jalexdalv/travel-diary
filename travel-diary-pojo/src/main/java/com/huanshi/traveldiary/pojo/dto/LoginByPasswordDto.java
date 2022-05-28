@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LoginByPasswordDto {
+    private Long imei;
     @Phone
     private Long phone;
     @Password

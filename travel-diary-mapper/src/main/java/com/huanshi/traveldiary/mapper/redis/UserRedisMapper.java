@@ -1,21 +1,28 @@
 package com.huanshi.traveldiary.mapper.redis;
 
+import com.huanshi.traveldiary.pojo.bo.LoginBo;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface UserRedisMapper {
-    void updateLoginSmsVerifyCode(long phone, int smsVerifyCode);
-    void deleteLoginSmsVerifyCode(long phone);
+    boolean updateLoginSmsVerifyCode(long phone, int smsVerifyCode);
+    boolean updateRegisterSmsVerifyCode(long phone, int smsVerifyCode);
+    boolean updateUpdatePasswordSmsVerifyCode(long phone, int smsVerifyCode);
+    boolean lockLogin(long id);
+    void updateToken(@NotNull LoginBo loginBo);
+    boolean deleteLoginSmsVerifyCode(long phone);
+    boolean deleteRegisterSmsVerifyCode(long phone);
+    boolean deleteUpdatePasswordSmsVerifyCode(long phone);
+    boolean unlockLogin(long id);
+    boolean deleteToken(long id, long imei);
     @Nullable
     Integer selectLoginSmsVerifyCodeByPhone(long phone);
-    void updateRegisterSmsVerifyCode(long phone, int smsVerifyCode);
-    void deleteRegisterSmsVerifyCode(long phone);
     @Nullable
     Integer selectRegisterSmsVerifyCodeByPhone(long phone);
-    void updateUpdatePasswordSmsVerifyCode(long phone, int smsVerifyCode);
-    void deleteUpdatePasswordSmsVerifyCode(long phone);
     @Nullable
     Integer selectUpdatePasswordSmsVerifyCodeByPhone(long phone);
-    void updateUserToken(long id, String token);
     @Nullable
-    String selectUserToken(long id);
+    Integer selectLoginDevice(long id);
+    @Nullable
+    String selectToken(long id, long imei);
 }
